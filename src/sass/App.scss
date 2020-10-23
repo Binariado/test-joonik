@@ -1,0 +1,17 @@
+
+@import "~bootstrap/scss/bootstrap";
+
+@import 'colors';
+
+@import 'font';
+
+.btn-gray {
+  color: $white;
+  background-color: $gray;
+  border-color: $gray;
+}
+
+.btn-style{
+  width: 200px;
+  height: 40px;
+}
