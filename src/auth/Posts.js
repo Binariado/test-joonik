@@ -12,7 +12,6 @@ const Posts = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-  const [newItem, setNewItem] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -58,23 +57,19 @@ const Posts = () => {
       ...formValue,
       token: authUser.token
     }
-
+    setLoading(true);
     await postsCreate(data)
       .then((resp) => {
         const { error } = resp;
         if (!error) {
-          setNewItem(resp);
-
-          setTimeout(() => {
-            setNewItem(null);
-          }, 400);
+          postsList[new Date().getTime()]=resp;
+          dispatch(dataPosts(postsList));
         }
-        //console.log(resp);
+        setLoading(false);
         handleClose();
       });
 
   }
-
   return (
 
     <React.StrictMode>
@@ -83,11 +78,6 @@ const Posts = () => {
       )}
       <Container className="content-post pt-5 mb-4 pb-5">
         <div>
-          {
-            newItem && (
-              <Card {...newItem} />
-            )
-          }
           {
             _.map(postsList, (post, idx) => <Card key={idx} {...post} />)
           }

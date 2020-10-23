@@ -19,7 +19,6 @@ const AppRouter = () => {
   const [isLoading, Authenticated] = useRemember();
 
 
-
   return (
     <div className="d-flex flex-column">
       {isLoading ? (

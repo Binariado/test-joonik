@@ -29,7 +29,7 @@ const useRemember = (props) => {
   const [loading, setLoading] = useState(true);
   const authUser = useSelector((state) => state.userAuth);
 
-  const { isAuthenticated } = authUser;
+  const {isAuthenticated} = authUser;
   const [auth, setAuth] = useState(authUser);
   
 
@@ -45,6 +45,7 @@ const useRemember = (props) => {
   useEffect(()=>{
     if(loading){
       const usuario = JSON.parse(localStorage.getItem('userAuth'));
+      //console.log(usuario, authUser.isAuthenticated,'usuario && !isAuthenticated');
       if(usuario && !isAuthenticated){
         handleValidToken(usuario)
         .then((resp)=>{
@@ -62,6 +63,8 @@ const useRemember = (props) => {
           }
           setLoading(false);
         })
+      }else{
+        setLoading(false);
       }
     }
   }, [isAuthenticated, authUser, loading, dispatch])
