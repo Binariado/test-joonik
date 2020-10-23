@@ -64,7 +64,7 @@ const useRemember = (props) => {
         })
       }
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, authUser, loading, dispatch])
 
   return [loading, auth];
 }

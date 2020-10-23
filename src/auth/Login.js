@@ -4,7 +4,7 @@ import { useForm, useToken } from 'hooks';
 import { useSelector, useDispatch } from "react-redux";
 import { userAuth } from "redux/actions";
 //import Error from 'Err';
-import {TOKEN_EXPIRED} from 'Err/typeError';
+import { TOKEN_EXPIRED } from 'Err/typeError';
 
 import {
   useHistory,
@@ -23,7 +23,7 @@ const Login = () => {
   let { from } = location.state || { from: { pathname: "/" } };
   //const [errView, setErrView] = useState(false);
   const authUser = useSelector((state) => state.userAuth);
- 
+
   const [emailToken, setEmailToken] = useState(null);
 
   const [formValue, handleInputChange] = useForm({
@@ -55,27 +55,22 @@ const Login = () => {
     setTimeout(cb, 100); // fake async
   };
 
-  const signout = (cb) => {
-    authUser.isAuthenticated = false;
-    setTimeout(cb, 100);
-  };
-
   const _handleemailToken = (obj) => {
     setLoading(true);
     handleemailToken(obj)
-      .then(({result, name, token}) => {
+      .then(({ result, name, token }) => {
         //console.log(data)
-        if(result){
+        if (result) {
           setEmailToken(result);
         }
-        if(token){
+        if (token) {
           const dataUser = {
             name,
             token
           };
-          authenticate(()=>{
+          authenticate(() => {
             history.replace(from);
-          },dataUser);
+          }, dataUser);
         }
         setLoading(false);
       })
@@ -85,24 +80,25 @@ const Login = () => {
   const value = !emailToken ? email : password;
   const v = (typeName === 'email' ? !email : !password);
 
-  const { error } = {...response};
+  const { error } = { ...response };
 
-  const _error = () => {
-    //console.log(error);
-    switch (error) {
-      case TOKEN_EXPIRED:
+
+
+  useEffect(() => {
+    const _error = () => {
+      //console.log(error);
+      switch (error) {
+        case TOKEN_EXPIRED:
           setEmailToken(null);
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
     }
-  }
-
-  useEffect(()=>{
-    if(error)
+    if (error)
       _error();
-  },[error]);
-  
+  }, [error]);
+
   //console.log({...response})
   return (
     <Container className="content-login d-flex flex-column justify-content-center align-items-center">
@@ -126,7 +122,7 @@ const Login = () => {
           name={typeName}
           value={value}
           onChange={(e) => handleInputChange(e)}
-          className={`form-control ${ error ? 'is-invalid': ''} rounded-pill`}
+          className={`form-control ${error ? 'is-invalid' : ''} rounded-pill`}
         />
         <div className="invalid-feedback">
           {error ? error : ''}
@@ -136,7 +132,7 @@ const Login = () => {
         <Button
           className="btn-style rounded-pill"
           variant="secondary"
-          onClick={ () => _handleemailToken({ email, password, emailToken }) }
+          onClick={() => _handleemailToken({ email, password, emailToken })}
           disabled={loading || v}
         >
           {loading ? 'Loading...' : textBtn[typeName]}

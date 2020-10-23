@@ -5,13 +5,6 @@ import { postsCreate } from "helpers";
 import { posts as dataPosts } from "redux/actions";
 import { posts } from "helpers";
 import { useForm } from 'hooks';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-  useHistory,
-} from "react-router-dom";
 import _ from "lodash";
 import 'sass/post.scss';
 
@@ -27,32 +20,30 @@ const Posts = () => {
   const postsList = useSelector((state) => state.posts);
   const authUser = useSelector((state) => state.userAuth);
 
-  let history = useHistory();
-
   const getPosts = async ({ token }) => {
     try {
-      const data = token? await posts(token):{error:'bad token'};
+      const data = token ? await posts(token) : { error: 'bad token' };
       return data;
     } catch (err) {
       console.log(err);
     }
   };
 
-  useEffect(()=>{
-    if(postsList.length === 0){
+  useEffect(() => {
+    if (postsList.length === 0) {
       setLoading(true);
       getPosts(authUser)
-      .then((resp)=>{
-        const {error} = resp;
-        if(!error){
-          dispatch(dataPosts(resp));
-          //window.location.reload();
-        }
-        setLoading(false);
-        
-      })
+        .then((resp) => {
+          const { error } = resp;
+          if (!error) {
+            dispatch(dataPosts(resp));
+            //window.location.reload();
+          }
+          setLoading(false);
+
+        })
     }
-  },[postsList])
+  }, [postsList, authUser, dispatch])
 
   const [formValue, handleInputChange] = useForm({
     image: '',
@@ -60,36 +51,40 @@ const Posts = () => {
     content: ''
   });
 
-  const { image, title, content } = formValue;
+  const { title, content } = formValue;
 
   const savePost = async () => {
     const data = {
       ...formValue,
       token: authUser.token
     }
-    
-    const resp = await postsCreate(data)
-    .then((resp)=>{
-      const {error} = resp;
-      if(!error){
-        setNewItem(resp);
 
-        setTimeout(() => {
-          setNewItem(null);
-        }, 400);
-      }
-      //console.log(resp);
-      handleClose();
-    });
+    await postsCreate(data)
+      .then((resp) => {
+        const { error } = resp;
+        if (!error) {
+          setNewItem(resp);
+
+          setTimeout(() => {
+            setNewItem(null);
+          }, 400);
+        }
+        //console.log(resp);
+        handleClose();
+      });
 
   }
-  console.log(newItem);
+
   return (
+
     <React.StrictMode>
+      {loading && (
+        <div>Loading...</div>
+      )}
       <Container className="content-post pt-5 mb-4 pb-5">
         <div>
           {
-            newItem &&(
+            newItem && (
               <Card {...newItem} />
             )
           }
@@ -119,7 +114,7 @@ const Posts = () => {
             <Form.Group>
               <Form.Label>Url Image</Form.Label>
 
-              <Form.File  name="image" label="Example file input" onChange={(e) => handleInputChange(e)} />
+              <Form.File name="image" label="Example file input" onChange={(e) => handleInputChange(e)} />
             </Form.Group>
             <Form.Group >
               <Form.Label>Title</Form.Label>

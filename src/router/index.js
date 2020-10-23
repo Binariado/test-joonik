@@ -58,7 +58,7 @@ const fakeAuth = {
 
 function AuthButton() {
   const dispatch = useDispatch();
-  const [refresh, setRefresh] = useState(new Date().getTime())
+  const [refresh, setRefresh] = useState(null)
   let history = useHistory();
 
   const authUser = useSelector((state) => state.userAuth);
@@ -70,13 +70,14 @@ function AuthButton() {
         <NavDropdown.Item 
         className="text-decoration-none" 
         onClick={() => {
+          setRefresh(true)
           authUser.isAuthenticated = false;
           dispatch(userAuth(authUser));
           localStorage.setItem("userAuth", JSON.stringify({}));
           fakeAuth.signout(() => {
             history.push("/login")
             setTimeout(() => {
-              setRefresh(new Date().getTime())
+              setRefresh(null)
             }, 100);
           });
         }}
@@ -84,9 +85,10 @@ function AuthButton() {
           Logout
         </NavDropdown.Item>
       </NavDropdown>
+      <div>{refresh?"loading...":''}</div>
     </Navbar>
   ) : (
-      <p></p>
+      <></>
     );
 }
 
